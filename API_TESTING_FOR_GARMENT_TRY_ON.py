@@ -1,5 +1,5 @@
 from clarifai.client.model import Model
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file,send_from_directory
 import os
 import cv2
 import numpy as np
@@ -435,7 +435,7 @@ def process_clothing_image():
                                 elif size == "L":
                                     avatar_image_path = "model_5.jpg"
 
-                            client = Client("levihsu/OOTDiffusion")
+                            client = Client("https://katiyar48-ootdiffusion-virtualtryonclothing.hf.space/--replicas/kbp2w/")
                             result = client.predict(
                                 vton_img=handle_file(avatar_image_path),
                                 garm_img=file(cropped_dress_img_path),
@@ -498,16 +498,16 @@ def process_clothing_image():
         plt.imshow(img)
         plt.axis('off')
         plt.savefig(output_image_path, format="jpg", bbox_inches='tight', pad_inches=0)
-        #plt.show()
+        plt.close()
 
     if not is_exactly_one_human(image_path, confidence_threshold=0.70) and (category == "Lower-body"):
-        for item in result:
-            img = mpimg.imread(item['image'])
-            output_image_path = os.path.join(UPLOAD_FOLDER, "result_image.jpg")
-            plt.imshow(img)
-            plt.axis('off') 
-            plt.savefig(output_image_path, format="jpg", bbox_inches='tight', pad_inches=0)
-            #plt.show()
+        image_path = result['image']
+        output_image_path = os.path.join(UPLOAD_FOLDER, "result_image.jpg")
+        img = mpimg.imread(image_path)
+        plt.imshow(img)
+        plt.axis('off')
+        plt.savefig(output_image_path, format="jpg", bbox_inches='tight', pad_inches=0)
+        plt.close()
 
     return jsonify({
         "message": "Image uploaded and processed successfully!",
